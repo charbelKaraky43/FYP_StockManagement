@@ -16,7 +16,8 @@
 <body>
 	<div class="app">
 		<div class="layout">
-			<?php include('partials/header.php') ?> <?php include('partials/sideNavbar.php') ?>
+			<?php include('../../utils/connect.php');?>
+			<?php include('../partials/header.php') ?> <?php include('../partials/sideNavbar.php') ?>
 			<div class="page-container">
 				<div class="main-content">
-					<?php include('partials/flash.php') ?>
+					<?php include('../partials/flash.php') ?>

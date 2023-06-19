@@ -1,7 +1,7 @@
 </div>
-<?php include('partials/footer.php') ?>
+<?php include('../partials/footer.php') ?>
 </div>
-<?php include('partials/quickView.php') ?>
+<?php include('../partials/quickView.php') ?>
 </div>
 </div>
 <script src="http://localhost/fyp_project/public/assets/js/pages/dashboard-default.js"></script>

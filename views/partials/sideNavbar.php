@@ -13,7 +13,7 @@
 				</a>
 				<ul class="dropdown-menu">
 					<li class="navItem">
-						<a href="/monthly_profit_cost">Stock Items</a>
+						<a href="/fyp_project/views/stock/index.php">Stock Items</a>
 					</li>
 				</ul>
 			</li>

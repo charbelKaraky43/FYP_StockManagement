@@ -1,5 +1,4 @@
 <?php
-include_once('../utils/connect.php');
 function getSupplier($con){
     $query = "SELECT * FROM `supplier`;";
     $result = mysqli_query($con,$query);
@@ -58,12 +57,12 @@ function receiveOrder($con,$orderID){
         if(mysqli_num_rows($result2)>0){
             $row2 = mysqli_fetch_assoc($result2);
             $qty = $row2['primary_quantity'] + $primaryQuantity;
-            $sql = "UPDATE `stock` SET `primary_quantity`=$qty WHERE `item_number`=$itemNumber";
+            $sql = "UPDATE `stock` SET `primary_quantity`=$qty,`primary_initial_quantity`=$qty WHERE `item_number`=$itemNumber";
             mysqli_query($con,$sql);
         }else{
             //INSERT into stock if stock doesn't exists
             //Treshold default 10
-            $sql = "INSERT INTO `stock`(`item_number`, `primary_quantity`, `threshold`, `flag`) VALUES ($itemNumber,$primaryQuantity,10,0)";
+            $sql = "INSERT INTO `stock`(`item_number`, `primary_quantity`, `threshold`, `flag`,`primary_initial_quantity`) VALUES ($itemNumber,$primaryQuantity,10,0,$primaryQuantity)";
             mysqli_query($con,$sql);
         }
         
@@ -90,15 +89,15 @@ function receiveOrder($con,$orderID){
                 mysqli_query($con, $sql);
             //Insert into stock details if different expiry date and item doesn't exists
             }else{
-                $sql = "SELECT max(`shelf_num`) FROM `stockdetails`";
+                $sql = "SELECT MAX(`shelf_num`) AS max FROM `stockdetails`";
                 $result = mysqli_query($con, $sql);
-                if(mysqli_num_rows($result)>0){
-                    $shelf = $result['shelf_num'] + 1;
-                }else{
-                    $shelf = 1 ;
+                $shelf = 1;
+                if (mysqli_num_rows($result) > 0) {
+                    $row = mysqli_fetch_assoc($result);
+                    $shelf = $row['max'] + 1;
                 }
                 $sql = "INSERT INTO `stockdetails`(`item_number`, `item_expiry_date`, `shelf_num`, `primary_quantity_batch`, `primary_unit_price`) 
-                VALUES ('$itemNumber','$expiry_date','$shelf','$qty','$primary_unit_price')";
+                VALUES ('$itemNumber','$expiry_date','$shelf','$primaryQuantity','$primary_unit_price')";
                 mysqli_query($con,$sql);
             }
         }
@@ -109,14 +108,30 @@ function receiveOrder($con,$orderID){
     );
     return json_encode($response);
 }
-
 function checkStock($con){
     $sql = "SELECT * FROM `stock` AS `s` 
-    JOIN `stockdetails` AS `sd` 
-    ON s.item_number=sd.item_number";
+    JOIN `itemmaster` AS `i` 
+    ON s.item_number=i.item_number";
     $result = mysqli_query($con,$sql);
     $row = mysqli_fetch_assoc($result);
-    return json_encode(array('stock_data' => $row));
+    $arr = array();
+    do{
+        $arr[] = $row;
+    }while($row = mysqli_fetch_assoc($result));
+    return json_encode(array('stock_data' => $arr)); 
+}
+function checkStockDetails($con)
+{
+    $sql = "SELECT * FROM `stock` AS `s` 
+    JOIN `stockdetails` AS `sd`
+    ON s.item_number=sd.item_number";
+    $result = mysqli_query($con, $sql);
+    $row = mysqli_fetch_assoc($result);
+    $arr = array();
+    do {
+        $arr[] = $row;
+    } while ($row = mysqli_fetch_assoc($result));
+    return json_encode(array('stock_details' => $arr));
 }
 ?>
 
