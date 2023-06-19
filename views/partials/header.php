@@ -1,9 +1,9 @@
 <div class="header">
 	<div class="logo logo-dark">
-		<h3 class="text-center mt-3">Garage Site</h3>
+		<h3 class="text-center mt-3">Stock Management</h3>
 	</div>
 	<div class="logo logo-white">
-		<h3 class="text-center mt-3">Garage Site</h3>
+		<h3 class="text-center mt-3">Stock Management</h3>
 	</div>
 	<div class="nav-wrap">
 		<ul class="nav-left">
@@ -33,7 +33,7 @@
 							</div>
 							<div class="m-l-10">
 								<p class="m-b-0 text-dark font-weight-semibold">Admin Admin</p>
-								<p class="m-b-0 opacity-07">Garage Manager</p>
+								<p class="m-b-0 opacity-07">Stock Manager</p>
 							</div>
 						</div>
 					</div>
@@ -41,7 +41,7 @@
 						<div class="d-flex align-items-center justify-content-between">
 							<div>
 								<i class="anticon opacity-04 font-size-16 anticon-logout"></i>
-								<span class="m-l-10"><a href="/logout">Logout</a></span>
+								<span class="m-l-10">Logout</span>
 							</div>
 							<i class="anticon font-size-10 anticon-right"></i>
 						</div>

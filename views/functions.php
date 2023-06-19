@@ -43,7 +43,7 @@ function receiveOrder($con,$orderID){
     }
     $sql = "UPDATE `orderheader` SET `order_status` = 'received' WHERE `order_id` = $orderID";
     mysqli_query($con, $sql);    
-    $sql = "SELECT `item_number`, `primary_quantity`,`item_expiry_date`,`primary_unit_price` FROM `orderdata` WHERE `order_id` = $orderID";
+    $sql = "SELECT * FROM `orderdata` WHERE `order_id` = $orderID";
     $result1 = mysqli_query($con,$sql);
     $row1 = mysqli_fetch_assoc($result1);
     do{
@@ -92,7 +92,7 @@ function receiveOrder($con,$orderID){
                 $sql = "SELECT MAX(`shelf_num`) AS max FROM `stockdetails`";
                 $result = mysqli_query($con, $sql);
                 $shelf = 1;
-                if (mysqli_num_rows($result) > 0) {
+                if (!is_null($result)) {
                     $row = mysqli_fetch_assoc($result);
                     $shelf = $row['max'] + 1;
                 }
@@ -101,7 +101,7 @@ function receiveOrder($con,$orderID){
                 mysqli_query($con,$sql);
             }
         }
-    }while($row = mysqli_fetch_assoc($result1));
+    }while($row1 = mysqli_fetch_assoc($result1));
 
     $response = array(
         'message' => 'Order received successfully.'
@@ -120,11 +120,12 @@ function checkStock($con){
     }while($row = mysqli_fetch_assoc($result));
     return json_encode(array('stock_data' => $arr)); 
 }
-function checkStockDetails($con)
+function checkStockDetails($con,$itemNumber)
 {
     $sql = "SELECT * FROM `stock` AS `s` 
     JOIN `stockdetails` AS `sd`
-    ON s.item_number=sd.item_number";
+    ON s.item_number=sd.item_number
+    WHERE s.item_number=$itemNumber";
     $result = mysqli_query($con, $sql);
     $row = mysqli_fetch_assoc($result);
     $arr = array();

@@ -35,6 +35,7 @@ $stockData = $data['stock_data'];
         <div class="row">
             <?php
             foreach ($stockData as $item) {
+                $itemNumber = $item['item_number'];
                 $itemName = $item['item_name'];
                 $itemDescription = $item['item_description'];
                 $itemImage = $item['item_image'];
@@ -51,7 +52,7 @@ $stockData = $data['stock_data'];
                                 </div>
                                 <div class="m-l-10">
                                     <h5 class="m-b-0">' . $itemName . '</h5>
-                                    <span class="text-muted font-size-13">' . $initialQuantity . ' items</span>
+                                    <span class="text-muted font-size-13">' . $quantity . ' items</span>
                                 </div>
                             </div>
                             <div class="dropdown dropdown-animated scale-left">
@@ -59,19 +60,20 @@ $stockData = $data['stock_data'];
                                     <i class="anticon anticon-ellipsis"></i>
                                 </a>
                                 <div class="dropdown-menu">
-                                <form method="get" id="myForm" action="show.php">
-                                    <button class="dropdown-item" onclick="submitForm()">
-                                        <i class="anticon anticon-eye"></i>
-                                        <span class="m-l-10">View</span>
-                                    </button>
-                                </form>
+                                    <form method="get" id="myForm" action="show.php">
+                                        <input type="hidden" value="' . $itemNumber . '" name="itemNumber"/>
+                                        <button class="dropdown-item" onclick="submitForm()">
+                                            <i class="anticon anticon-eye"></i>
+                                            <span class="m-l-10">View</span>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                         <p class="m-t-25">' . $itemDescription . '</p>
                         <div class="m-t-30">
                             <div class="d-flex justify-content-between">
-                                <span class="font-weight-semibold">Progress</span>
+                                <span class="font-weight-semibold">Items Left</span>
                                 <span class="font-weight-semibold">' . intval(($quantity / $initialQuantity) * 100) . '%</span>
                             </div>
                             <div class="progress progress-sm m-t-10">';
@@ -97,7 +99,6 @@ $stockData = $data['stock_data'];
             } ?>
         </div>
     </div>
-</div>
 </div>
 
 <script>
