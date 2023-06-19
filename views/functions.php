@@ -127,12 +127,59 @@ function checkStockDetails($con,$itemNumber)
     ON s.item_number=sd.item_number
     WHERE s.item_number=$itemNumber";
     $result = mysqli_query($con, $sql);
-    $row = mysqli_fetch_assoc($result);
-    $arr = array();
-    do {
-        $arr[] = $row;
-    } while ($row = mysqli_fetch_assoc($result));
-    return json_encode(array('stock_details' => $arr));
+    if(mysqli_num_rows($result)>0){
+        $row = mysqli_fetch_assoc($result);
+        $arr = array();
+        do {
+            $arr[] = $row;
+        } while ($row = mysqli_fetch_assoc($result));
+        return json_encode(array('stock_details' => $arr));
+    }
+    $response = array(
+        'error' => 'Stock Not Found'
+    );
+    return json_encode($response);
+}
+function getStockItem($con,$itemNumber,$amount_needed){
+    $sql = "SELECT `primary_quantity` FROM `stock` WHERE `item_number`=$itemNumber";
+    $result = mysqli_query($con,$sql);
+    if(mysqli_num_rows($result)>0){
+        $row = mysqli_fetch_assoc($result);
+        if($row['primary_quantity']<$amount_needed){
+            $response = array(
+                'message' => 'Not enough Items.'
+            );
+            return json_encode($response);
+        }else{
+            $qty_stock_left = $row['primary_quantity'] - $amount_needed;
+            $sql = "SELECT * FROM `stockdetails` 
+            WHERE `item_number`=$itemNumber 
+            ORDER BY `item_expiry_date` ASC";
+            $result = mysqli_query($con,$sql);
+            $row = mysqli_fetch_assoc($result);
+            do{
+                $item_number = $row['item_number'];
+                $item_expiry_date = $row['item_expiry_date'];
+                $qty_batch = $row['primary_quantity_batch'];
+                if($qty_batch>$amount_needed){
+                    $qty_left = $qty_batch - $amount_needed;
+                    $sql = "UPDATE `stockdetails` SET `primary_quantity_batch`='$qty_left' WHERE `item_number`='$item_number' AND `item_expiry_date`='$item_expiry_date';";
+                    mysqli_query($con,$sql);
+                    $sql = "UPDATE `stock` SET `primary_quantity`='$qty_stock_left' WHERE `item_number`='$itemNumber'";
+                    echo $sql;
+                    mysqli_query($con,$sql);
+                    $response = array(
+                        'message' => 'Succesfully taken'
+                    );
+                    return json_encode($response);
+                }else{
+                    $amount_needed -= $qty_batch;
+                    $sql = "UPDATE `stockdetails` SET `primary_quantity_batch`='0' WHERE `item_number`='$item_number' AND `item_expiry_date`='$item_expiry_date';";
+                    mysqli_query($con, $sql);
+                }
+            }while($row = mysqli_fetch_assoc($result));
+        }
+    }
 }
 ?>
 

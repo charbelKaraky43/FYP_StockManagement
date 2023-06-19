@@ -64,7 +64,7 @@
 				</a>
 				<ul class="dropdown-menu">
 					<li class="navItem">
-						<a href="/customers">Edit Treshold</a>
+						<a href="/fyp_project/views/settings/setting.php">Edit Treshold</a>
 					</li>
 				</ul>
 			</li>
